@@ -1,0 +1,124 @@
+/* Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --theme-color: #000;
+  --theme-transition: 0.3s ease;
+  --content-scale: 1rem;
+  --content-height: 60vh;
+  --text-color: white;
+  --site-scale: 1;
+  --header-height: 60px;
+  --sidebar-width: 250px;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--theme-color);
+  color: var(--text-color);
+  transition: background-color var(--theme-transition);
+}
+
+/* Header with centered logo */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the logo */
+  padding: 0 20px;
+  z-index: 100;
+  transition: all var(--theme-transition);
+  mix-blend-mode: difference;
+}
+
+.logo-container {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+.header-nav {
+  margin-left: auto;
+  display: flex;
+  gap: 40px;
+}
+
+/* Color Wheel */
+.color-wheel-container {
+  margin-top: 30px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.color-wheel {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: conic-gradient(
+    red, orange, yellow, green, blue, indigo, violet, red
+  );
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+.color-wheel:hover {
+  transform: scale(1.05);
+}
+
+/* Nav Ball */
+.nav-ball {
+  position: fixed;
+  top: var(--header-height);
+  left: var(--sidebar-width);
+  width: 40px;
+  height: 40px;
+  background: var(--theme-color);
+  border-radius: 50%;
+  z-index: 2000;
+  cursor: grab;
+  mix-blend-mode: difference;
+  transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.nav-ball.fullscreen {
+  border-radius: 0;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+  width: 60px;
+  height: 60px;
+  top: 0;
+  left: 0;
+  transform: none !important;
+}
+
+/* Sections Fullscreen */
+.section.is-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 95vw;
+  height: 95vh;
+  margin: 2.5vh 2.5vw;
+  z-index: 1000;
+  border-radius: 12px;
+  overflow: auto;
+}
+
+/* Rest of your existing styles... */
