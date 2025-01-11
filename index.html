@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UNIT3</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <!-- Centered logo -->
+    <div class="logo-container">
+      <span class="logo">UNIT</span>
+      <span class="logo-number">3</span>
+    </div>
+
+    <nav class="header-nav">
+      <div class="dropdown">
+        <span class="dropdown-trigger">Latest</span>
+        <div class="dropdown-content">
+          <button onclick="addSection('News')">News</button>
+          <button onclick="addSection('Updates')">Updates</button>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <span class="dropdown-trigger">Cafe</span>
+        <div class="dropdown-content">
+          <button onclick="addSection('Menu')">Menu</button>
+          <button onclick="addSection('By Day')">By Day</button>
+          <button onclick="addSection('By Night')">By Night</button>
+          <button onclick="addSection('Events')">Events</button>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <span class="dropdown-trigger">Calendar</span>
+        <div class="dropdown-content calendar-dropdown"></div>
+      </div>
+    </nav>
+  </header>
+
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <h2>Creates</h2>
+      <button onclick="addSection('Workshops')">Workshops</button>
+      <button onclick="addSection('Marketplace')">Marketplace</button>
+      <button onclick="addSection('Skill-Share')">Skill-Share</button>
+      <button onclick="addSection('The Workroom')">The Workroom</button>
+    </div>
+
+    <div class="sidebar-section">
+      <h2>Curates</h2>
+      <button onclick="addSection('Exhibitions')">Exhibitions</button>
+      <button onclick="addSection('Events')">Events</button>
+      <button onclick="addSection('The Fungi Room')">The Fungi Room</button>
+      <button onclick="addSection('Creative Climate Collab')">Creative Climate Collab</button>
+    </div>
+
+    <div class="sidebar-section">
+      <h2>Connects</h2>
+      <button onclick="addSection('Directory')">Directory</button>
+      <button onclick="addSection('Zine')">Zine</button>
+      <button onclick="addSection('Opportunities')">Opportunities</button>
+    </div>
+
+    <!-- Color wheel picker moved below Connects -->
+    <div class="color-wheel-container">
+      <div class="color-wheel"></div>
+    </div>
+  </nav>
+
+  <main id="mainContent" role="main"></main>
+
+  <!-- Nav ball for scaling -->
+  <div id="navBall" class="nav-ball"></div>
+
+  <!-- Section dots navigation -->
+  <div id="sectionSlider" class="section-slider"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
