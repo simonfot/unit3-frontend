@@ -1,155 +1,164 @@
-// State tracking
-let activeSections = [];
-let draggedSection = null;
-let siteScale = 1.0;
-let isFullscreen = false;
-let previousScale = 1.0;
+// Previous code remains the same...
 
-// Scale limits
-const MIN_SCALE = 0.5;
-const MAX_SCALE = 1.5;
-
-// Nav ball drag state
-let isDragging = false;
-let startX = 0, startY = 0;
-let offsetX = 0, offsetY = 0;
-
-document.addEventListener('DOMContentLoaded', () => {
-  setupColorWheel();
-  setupDropdowns();
-  setupNavBall();
-  setupSectionSlider();
+/* Color Wheel Setup */
+function setupColorWheel() {
+  const wheel = document.querySelector('.color-wheel');
+  let isSelecting = false;
   
-  // Open Latest by default
-  setTimeout(() => addSection('Latest'), 100);
-});
-
-/* Nav Ball Setup */
-function setupNavBall() {
-  const navBall = document.getElementById('navBall');
-  
-  navBall.addEventListener('mousedown', startDrag);
-  document.addEventListener('mousemove', drag);
-  document.addEventListener('mouseup', endDrag);
+  wheel.addEventListener('mousedown', startColorSelect);
+  document.addEventListener('mousemove', updateColor);
+  document.addEventListener('mouseup', endColorSelect);
   
   // Touch support
-  navBall.addEventListener('touchstart', (e) => {
+  wheel.addEventListener('touchstart', (e) => {
     e.preventDefault();
-    startDrag(e.touches[0]);
+    startColorSelect(e.touches[0]);
   });
   
   document.addEventListener('touchmove', (e) => {
-    if (isDragging) {
+    if (isSelecting) {
       e.preventDefault();
-      drag(e.touches[0]);
+      updateColor(e.touches[0]);
     }
   });
   
-  document.addEventListener('touchend', endDrag);
+  document.addEventListener('touchend', endColorSelect);
   
-  // Click to toggle fullscreen (only if not dragging)
-  navBall.addEventListener('click', (e) => {
-    if (!isDragging) {
-      toggleFullscreen();
-    }
-  });
-}
-
-function startDrag(e) {
-  if (isFullscreen) return;
+  function startColorSelect(e) {
+    isSelecting = true;
+    updateColor(e);
+  }
   
-  isDragging = true;
-  const navBall = document.getElementById('navBall');
-  navBall.style.cursor = 'grabbing';
-  
-  // Store initial position
-  startX = e.clientX - offsetX;
-  startY = e.clientY - offsetY;
-}
-
-function drag(e) {
-  if (!isDragging || isFullscreen) return;
-  
-  // Calculate new position
-  offsetX = e.clientX - startX;
-  offsetY = e.clientY - startY;
-  
-  // Update nav ball position
-  const navBall = document.getElementById('navBall');
-  updateNavBallPosition(navBall, offsetX, offsetY);
-  
-  // Calculate scale based on distance from origin
-  const baseX = 250; // sidebar width
-  const baseY = 60;  // header height
-  const deltaX = offsetX;
-  const deltaY = offsetY;
-  const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-  
-  // Scale based on distance, with limits
-  const newScale = Math.max(MIN_SCALE, 
-                          Math.min(MAX_SCALE, 
-                                 1 + (distance / 500)));
-  
-  siteScale = newScale;
-  applySiteScale(newScale);
-}
-
-function endDrag() {
-  isDragging = false;
-  const navBall = document.getElementById('navBall');
-  navBall.style.cursor = 'grab';
-}
-
-// Position nav ball within bounds
-function updateNavBallPosition(ball, x, y) {
-  const header = document.querySelector('header');
-  const sidebar = document.querySelector('.sidebar');
-  
-  // Base position (intersection of header and sidebar)
-  const baseX = sidebar.offsetWidth;
-  const baseY = header.offsetHeight;
-  
-  // Calculate new position with bounds
-  const maxX = window.innerWidth - ball.offsetWidth;
-  const maxY = window.innerHeight - ball.offsetHeight;
-  
-  const newX = Math.max(baseX, Math.min(baseX + x, maxX));
-  const newY = Math.max(baseY, Math.min(baseY + y, maxY));
-  
-  // Update position relative to base point
-  ball.style.transform = `translate(${newX - baseX}px, ${newY - baseY}px)`;
-}
-
-// Toggle fullscreen mode
-function toggleFullscreen() {
-  const navBall = document.getElementById('navBall');
-  
-  if (!isFullscreen) {
-    // Enter fullscreen
-    isFullscreen = true;
-    previousScale = siteScale;
-    navBall.classList.add('fullscreen');
+  function updateColor(e) {
+    if (!isSelecting) return;
     
-    // Set a slightly larger scale for fullscreen
-    applySiteScale(1.2);
+    const rect = wheel.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
     
-    // Move nav ball to top-left corner
-    navBall.style.transform = 'none';
+    // Calculate angle from center to cursor
+    const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
     
-  } else {
-    // Exit fullscreen
-    isFullscreen = false;
-    navBall.classList.remove('fullscreen');
+    // Convert angle to hue (0-360)
+    const hue = ((angle * 180 / Math.PI) + 360) % 360;
     
-    // Restore previous scale
-    applySiteScale(previousScale);
+    // Calculate distance from center (for saturation)
+    const distance = Math.min(1, Math.sqrt(
+      Math.pow(e.clientX - centerX, 2) + 
+      Math.pow(e.clientY - centerY, 2)
+    ) / (rect.width / 2));
     
-    // Restore previous position
-    updateNavBallPosition(navBall, offsetX, offsetY);
+    // Create color
+    const color = `hsl(${hue}, ${distance * 100}%, 50%)`;
+    document.documentElement.style.setProperty('--theme-color', color);
+    localStorage.setItem('lastThemeColor', color);
+  }
+  
+  function endColorSelect() {
+    isSelecting = false;
   }
 }
 
-// Apply scale to main content areas
-function applySiteScale(scale) {
-  document.documentElement.style.setProperty('--site-scale', scale);
+/* Section Management */
+function addSection(name) {
+  if (activeSections.includes(name)) {
+    const existing = document.getElementById(`section-${name}`);
+    if (existing) existing.scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
+  
+  activeSections.push(name);
+  
+  const section = document.createElement('div');
+  section.className = 'section';
+  section.id = `section-${name}`;
+  
+  section.innerHTML = `
+    <div class="section-header">
+      <div class="drag-handle">⋮⋮</div>
+      <h2>${name}</h2>
+      <div class="section-controls">
+        <button onclick="minimizeSection('${name}')">−</button>
+        <button onclick="closeSection('${name}')">×</button>
+      </div>
+    </div>
+    <div class="section-content">
+      ${generateSectionContent(name)}
+    </div>
+  `;
+  
+  // Make section draggable
+  section.draggable = true;
+  section.addEventListener('dragstart', handleDragStart);
+  section.addEventListener('dragend', handleDragEnd);
+  section.addEventListener('dragover', handleDragOver);
+  section.addEventListener('drop', handleDrop);
+  
+  document.getElementById('mainContent').appendChild(section);
+  
+  // Update nav
+  updateSectionOrder();
+  updateSlider();
+  
+  section.scrollIntoView({ behavior: 'smooth' });
+}
+
+function generateSectionContent(name) {
+  const placeholders = {
+    'Menu': `
+      <h3>Daily Menu</h3>
+      <div class="menu-section">
+        <h4>Coffee</h4>
+        <p>Espresso • Americano • Latte • Cappuccino</p>
+      </div>
+      <div class="menu-section">
+        <h4>Food</h4>
+        <p>Fresh Sandwiches • Daily Specials • Local Pastries</p>
+      </div>
+    `,
+    'By Day': `
+      <h3>Daytime at UNIT3</h3>
+      <p>A creative space for work, meetings, and community (9am - 4pm)</p>
+      <div class="day-features">
+        <h4>Workspace</h4>
+        <p>Free WiFi • Power Outlets • Natural Light</p>
+      </div>
+    `,
+    'By Night': `
+      <h3>Evening at UNIT3</h3>
+      <p>Events, exhibitions, and entertainment (6pm - 10pm)</p>
+      <div class="night-events">
+        <h4>Regular Events</h4>
+        <p>DJ Nights • Art Shows • Pop-up Dinners</p>
+      </div>
+    `,
+    'The Fungi Room': `
+      <h3>The Fungi Room</h3>
+      <p>Exploring the fascinating world of mushrooms</p>
+      <div class="fungi-content">
+        <h4>Current Grows</h4>
+        <p>Lions Mane • Oyster • Reishi</p>
+      </div>
+    `,
+    'Latest': `
+      <h3>Latest Updates</h3>
+      <div class="updates-grid">
+        <div class="update-item">
+          <h4>Recent News</h4>
+          <p>Latest events, workshops, and community updates</p>
+        </div>
+        <div class="update-item">
+          <h4>Upcoming</h4>
+          <p>New exhibitions • Pop-up events • Special collaborations</p>
+        </div>
+      </div>
+    `
+  };
+  
+  return placeholders[name] || `
+    <div class="placeholder-content">
+      <h3>${name}</h3>
+      <p>Content for ${name} section is being developed...</p>
+    </div>
+  `;
 }
