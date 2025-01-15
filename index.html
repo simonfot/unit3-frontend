@@ -8,40 +8,24 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Simplified header with only logo -->
   <header>
-    <!-- Centered logo -->
     <div class="logo-container">
-      <span class="logo">UNIT</span>
-      <span class="logo-number">3</span>
+      <span class="logo">UNIT3</span>
     </div>
-
-    <nav class="header-nav">
-      <div class="dropdown">
-        <span class="dropdown-trigger">Latest</span>
-        <div class="dropdown-content">
-          <button onclick="addSection('News')">News</button>
-          <button onclick="addSection('Updates')">Updates</button>
-        </div>
-      </div>
-
-      <div class="dropdown">
-        <span class="dropdown-trigger">Cafe</span>
-        <div class="dropdown-content">
-          <button onclick="addSection('Menu')">Menu</button>
-          <button onclick="addSection('By Day')">By Day</button>
-          <button onclick="addSection('By Night')">By Night</button>
-          <button onclick="addSection('Events')">Events</button>
-        </div>
-      </div>
-
-      <div class="dropdown">
-        <span class="dropdown-trigger">Calendar</span>
-        <div class="dropdown-content calendar-dropdown"></div>
-      </div>
-    </nav>
   </header>
 
+  <!-- Reorganized sidebar with all navigation -->
   <nav class="sidebar">
+    <!-- Cafe section first -->
+    <div class="sidebar-section">
+      <h2>Cafe</h2>
+      <button onclick="addSection('Menu')">Menu</button>
+      <button onclick="addSection('By Day')">By Day</button>
+      <button onclick="addSection('By Night')">By Night</button>
+      <button onclick="addSection('Events')">Events</button>
+    </div>
+
     <div class="sidebar-section">
       <h2>Creates</h2>
       <button onclick="addSection('Workshops')">Workshops</button>
@@ -65,13 +49,37 @@
       <button onclick="addSection('Opportunities')">Opportunities</button>
     </div>
 
-    <!-- Color wheel picker moved below Connects -->
-    <div class="color-wheel-container">
+    <!-- Calendar section at bottom -->
+    <div class="sidebar-section calendar-section">
+      <h2>Calendar</h2>
+      <div class="calendar-preview">
+        <!-- Calendar preview will be populated by JS -->
+      </div>
+    </div>
+
+    <!-- Color wheel at the very bottom -->
+    <div class="sidebar-section color-section">
+      <h2>Theme</h2>
       <div class="color-wheel"></div>
+      <div class="current-theme">Current: <span class="theme-name">Default</span></div>
     </div>
   </nav>
 
   <main id="mainContent" role="main"></main>
+
+  <!-- Calendar popup container -->
+  <div id="calendarPopup" class="calendar-popup">
+    <div class="calendar-content">
+      <div class="calendar-header">
+        <button class="prev-month">&lt;</button>
+        <h3 class="current-month">January 2025</h3>
+        <button class="next-month">&gt;</button>
+      </div>
+      <div class="calendar-grid">
+        <!-- Calendar grid will be populated by JS -->
+      </div>
+    </div>
+  </div>
 
   <!-- Nav ball for scaling -->
   <div id="navBall" class="nav-ball"></div>
