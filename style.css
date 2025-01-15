@@ -14,6 +14,7 @@
   --site-scale: 1;
   --header-height: 60px;
   --sidebar-width: 250px;
+  --calendar-day-size: 36px;
 }
 
 body {
@@ -25,7 +26,7 @@ body {
   transition: background-color var(--theme-transition);
 }
 
-/* Header with centered logo */
+/* Simplified Header */
 header {
   position: fixed;
   top: 0;
@@ -33,44 +34,183 @@ header {
   right: 0;
   height: var(--header-height);
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: center; /* Center the logo */
-  padding: 0 20px;
   z-index: 100;
-  transition: all var(--theme-transition);
   mix-blend-mode: difference;
 }
 
 .logo-container {
   font-family: 'Orbitron', sans-serif;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 900;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
   user-select: none;
 }
 
-.header-nav {
-  margin-left: auto;
+/* Enhanced Sidebar */
+.sidebar {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  padding: 20px;
+  overflow-y: auto;
+  z-index: 99;
+  mix-blend-mode: difference;
   display: flex;
-  gap: 40px;
+  flex-direction: column;
 }
 
-/* Color Wheel */
-.color-wheel-container {
-  margin-top: 30px;
-  padding: 20px;
+.sidebar-section {
+  margin-bottom: 30px;
+}
+
+.sidebar-section h2 {
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: var(--theme-color);
+  mix-blend-mode: difference;
+}
+
+.sidebar-section button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px;
+  margin: 4px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: inherit;
+}
+
+.sidebar-section button:hover {
+  transform: translateX(4px);
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+
+/* Calendar Preview */
+.calendar-preview {
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+}
+
+.calendar-preview:hover {
+  background: rgba(255,255,255,0.1);
+  transform: scale(1.02);
+}
+
+.week-preview {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.week-day {
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.week-day.has-event {
+  background: var(--theme-color);
+  color: white;
+}
+
+/* Calendar Popup */
+.calendar-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.calendar-popup.active {
   display: flex;
+  opacity: 1;
+}
+
+.calendar-content {
+  background: var(--theme-color);
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+.calendar-popup.active .calendar-content {
+  transform: scale(1);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, var(--calendar-day-size));
+  gap: 8px;
   justify-content: center;
 }
 
-.color-wheel {
-  width: 150px;
-  height: 150px;
+.calendar-day {
+  width: var(--calendar-day-size);
+  height: var(--calendar-day-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calendar-day:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.calendar-day.today {
+  border: 2px solid var(--theme-color);
+}
+
+.calendar-day.has-event {
+  background: var(--theme-color);
+  color: white;
+}
+
+/* Color Wheel Section */
+.color-section {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.color-wheel {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin: 15px auto;
   background: conic-gradient(
     red, orange, yellow, green, blue, indigo, violet, red
   );
@@ -83,42 +223,11 @@ header {
   transform: scale(1.05);
 }
 
-/* Nav Ball */
-.nav-ball {
-  position: fixed;
-  top: var(--header-height);
-  left: var(--sidebar-width);
-  width: 40px;
-  height: 40px;
-  background: var(--theme-color);
-  border-radius: 50%;
-  z-index: 2000;
-  cursor: grab;
-  mix-blend-mode: difference;
-  transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
-}
-
-.nav-ball.fullscreen {
-  border-radius: 0;
-  clip-path: polygon(0 0, 100% 0, 0 100%);
-  width: 60px;
-  height: 60px;
-  top: 0;
-  left: 0;
-  transform: none !important;
-}
-
-/* Sections Fullscreen */
-.section.is-fullscreen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 95vw;
-  height: 95vh;
-  margin: 2.5vh 2.5vw;
-  z-index: 1000;
-  border-radius: 12px;
-  overflow: auto;
+.current-theme {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 10px;
+  opacity: 0.8;
 }
 
 /* Rest of your existing styles... */
