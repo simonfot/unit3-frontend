@@ -1,127 +1,84 @@
-/* Base Styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ... previous styles remain ... */
 
-:root {
-  --theme-color: #000;
-  --theme-transition: 0.3s ease;
-  --content-scale: 1rem;
-  --content-height: 60vh;
-  --text-color: white;
-  --site-scale: 1;
-  --header-height: 60px;
-  --sidebar-width: 250px;
-  --calendar-day-size: 36px;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  height: 100vh;
-  overflow: hidden;
-  background: var(--theme-color);
-  color: var(--text-color);
-  transition: background-color var(--theme-transition);
-}
-
-/* Simplified Header */
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: var(--header-height);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-  mix-blend-mode: difference;
-}
-
-.logo-container {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 28px;
-  font-weight: 900;
-  user-select: none;
-}
-
-/* Enhanced Sidebar */
-.sidebar {
-  position: fixed;
-  top: var(--header-height);
-  left: 0;
-  bottom: 0;
-  width: var(--sidebar-width);
-  padding: 20px;
-  overflow-y: auto;
-  z-index: 99;
-  mix-blend-mode: difference;
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar-section {
-  margin-bottom: 30px;
-}
-
-.sidebar-section h2 {
-  margin-bottom: 15px;
-  font-size: 18px;
-  color: var(--theme-color);
-  mix-blend-mode: difference;
-}
-
-.sidebar-section button {
-  display: block;
-  width: 100%;
-  text-align: left;
-  padding: 8px;
-  margin: 4px 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: inherit;
-}
-
-.sidebar-section button:hover {
-  transform: translateX(4px);
-  background: rgba(255,255,255,0.1);
-  border-radius: 4px;
-}
-
-/* Calendar Preview */
+/* Enhanced Calendar Preview */
 .calendar-preview {
   background: rgba(255,255,255,0.05);
-  border-radius: 8px;
-  padding: 12px;
-  margin-top: 10px;
-  transition: all 0.3s ease;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 10px 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  overflow: hidden;
+  height: 140px; /* Height for week view */
 }
 
-.calendar-preview:hover {
-  background: rgba(255,255,255,0.1);
-  transform: scale(1.02);
+.calendar-preview.expanded {
+  height: 300px; /* Height for month view */
 }
 
 .week-preview {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
-  font-size: 12px;
-  text-align: center;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.calendar-preview.expanded .week-preview {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .week-day {
-  padding: 4px;
-  border-radius: 4px;
+  text-align: center;
+  padding: 8px 4px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.week-day:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-2px);
+}
+
+.week-day.today {
+  border: 1px solid var(--theme-color);
 }
 
 .week-day.has-event {
   background: var(--theme-color);
-  color: white;
+}
+
+.event-indicator {
+  width: 6px;
+  height: 6px;
+  background: var(--theme-color);
+  border-radius: 50%;
+  margin: 4px auto 0;
+}
+
+/* Month Preview */
+.month-preview {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.calendar-preview.expanded .month-preview {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.month-header {
+  text-align: center;
+  font-size: 1.1em;
+  margin-bottom: 12px;
+}
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
 }
 
 /* Calendar Popup */
@@ -132,102 +89,87 @@ header {
   width: 100vw;
   height: 100vh;
   background: rgba(0,0,0,0.8);
-  display: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
-  opacity: 0;
-  transition: opacity 0.3s ease;
 }
 
 .calendar-popup.active {
-  display: flex;
   opacity: 1;
+  visibility: visible;
 }
 
 .calendar-content {
   background: var(--theme-color);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 24px;
   width: 90%;
   max-width: 800px;
   max-height: 90vh;
   overflow-y: auto;
-  transform: scale(0.95);
-  transition: transform 0.3s ease;
 }
 
-.calendar-popup.active .calendar-content {
-  transform: scale(1);
-}
-
-.calendar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, var(--calendar-day-size));
-  gap: 8px;
-  justify-content: center;
-}
-
-.calendar-day {
-  width: var(--calendar-day-size);
-  height: var(--calendar-day-size);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.calendar-day:hover {
-  background: rgba(255,255,255,0.1);
-}
-
-.calendar-day.today {
-  border: 2px solid var(--theme-color);
-}
-
-.calendar-day.has-event {
-  background: var(--theme-color);
-  color: white;
-}
-
-/* Color Wheel Section */
+/* Color Section */
 .color-section {
-  margin-top: auto;
-  padding-top: 20px;
+  padding: 20px;
   border-top: 1px solid rgba(255,255,255,0.1);
+  margin-top: auto;
 }
 
 .color-wheel {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
   margin: 15px auto;
-  background: conic-gradient(
-    red, orange, yellow, green, blue, indigo, violet, red
-  );
   cursor: pointer;
   transition: transform 0.3s ease;
-  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  background: conic-gradient(
+    hsl(0, 100%, 50%),
+    hsl(60, 100%, 50%),
+    hsl(120, 100%, 50%),
+    hsl(180, 100%, 50%),
+    hsl(240, 100%, 50%),
+    hsl(300, 100%, 50%),
+    hsl(360, 100%, 50%)
+  );
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
 }
 
 .color-wheel:hover {
   transform: scale(1.05);
 }
 
-.current-theme {
+.theme-name {
   text-align: center;
-  font-size: 14px;
-  margin-top: 10px;
+  font-size: 0.9em;
+  margin-top: 12px;
   opacity: 0.8;
+  transition: all 0.3s ease;
 }
 
-/* Rest of your existing styles... */
+/* Animations */
+@keyframes calendarOpen {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes calendarClose {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}
